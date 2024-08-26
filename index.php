@@ -43,6 +43,11 @@ $bot->on('text', function($data) use ($bot, $db) {
   $is_new = $db->add_user($chat_id);
   $user = $db->get_user($chat_id);
 
+  if ($chat_id == CREATOR && startsWith('/backup', $text)) {
+    $bot->sendDocument([ 'chat_id'=> $chat_id, 'document'=> 'database.db', 'reply_to_message_id'=> $msg_id ]);
+    return;
+  }
+
   if (startsWith("get_question_", $user['step'])) {
     if (mb_strlen("$text") > 200 || mb_strlen("$text") < 5) {
       $bot->sendMessage(['chat_id'=> $chat_id, 'text'=> "طول سوال باید بین ۵ تا ۲۰۰ کرکتر باشه!"]);

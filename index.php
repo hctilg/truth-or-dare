@@ -146,6 +146,13 @@ $bot->on('inline_query', function($inline_query) use ($bot, $db) {
   ]);  
 });
 
+function get_name($bot, $user_id) {
+  $chat = $bot->getChat(['chat_id'=> $user_id])['result'];
+  $chat_name = $chat['first_name'] ?? '';
+  if (isset($chat['last_name'])) $chat_name .= $chat['last_name'];
+  return $chat_name;
+}
+
 $bot->on('callback_query', function($callback_query) use ($bot, $db) {
   $query_id = $callback_query['id'];
   $query_data = $callback_query['data'];
@@ -232,13 +239,6 @@ $bot->on('callback_query', function($callback_query) use ($bot, $db) {
 
   if ($query_data == 'reject') {
     $bot->deleteMessage(['chat_id'=> $chat_id, 'message_id'=> $msg_id]);
-  }
-
-  function get_name($bot, $user_id) {
-    $chat = $bot->getChat(['chat_id'=> $user_id])['result'];
-    $chat_name = $chat['first_name'] ?? '';
-    if (isset($chat['last_name'])) $chat_name .= $chat['last_name'];
-    return $chat_name;
   }
 
   if (startsWith('new_player_', $query_data)) {

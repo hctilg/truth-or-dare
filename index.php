@@ -409,7 +409,7 @@ ${names}",
 
     $current_player = get_name($bot, $data['players'][$data['round']]);
 
-    $question = $db->random_question($type) ?? "شانس آوردی پوچ شد، رد کن 😁";
+    $question = trim($db->random_question($type)) ?? "شانس آوردی پوچ شد، رد کن 😁";
 
     $bot->editMessageText([
       'text'=> "

@@ -88,7 +88,7 @@ $bot->on('text', function($data) use ($bot, $db) {
       $bot->sendMessage([
         'chat_id'=> CREATOR,
         'text'=> "سوال ارسالی در ژانر ${genre} :\n\n${text}",
-        'reply_markup'=> Telebot::inline_keyboard("[لغو ❌|reject][تایید ✅|add_${type}*" . base64_encode("$text") . "]"),
+        'reply_markup'=> Telebot::inline_keyboard("[لغو ❌|reject][تایید ✅|add_${type}]"),
       ]);
     }
   } else {
@@ -206,10 +206,14 @@ $bot->on('callback_query', function($callback_query) use ($bot, $db) {
   }
 
   if (startsWith('add_', $query_data)) {
-    $query = explode('*', substr($query_data, strlen('add_')));
-    $type = $query[0];
-    $question = $query[1];
-    $db->add_question("$type", "$question");
+    $type = substr($query_data, strlen('add_'));
+    
+    $text_lines = explode("\n", $callback_query['message']['text']);
+    unset($text_lines[0]);
+    
+    $question = trim(join("\n", $text_lines));
+
+    $db->add_question("$type", base64_encode("$question"));
     $bot->answerCallbackQuery(['callback_query_id'=> $query_id, 'text'=> "سوال به دیتابیس اصافه شد 🎈", 'show_alert'=> true]);
     
     $genre = [
@@ -223,14 +227,13 @@ $bot->on('callback_query', function($callback_query) use ($bot, $db) {
       "dare_sexy_girl" => "جرأت +18 (دختر)"
     ][$type];
 
-    $real_question = base64_decode($question);
 
     $bot->editMessageText([
       'chat_id'=> $chat_id,
       'text'=> "
 ⚜️ دسته‌بندی: {$genre}
 
-  • ${real_question}
+  • ${question}
 ",
       'reply_markup'=> Telebot::inline_keyboard(''),
       'message_id'=> $msg_id

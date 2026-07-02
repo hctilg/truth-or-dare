@@ -87,8 +87,9 @@ $bot->on('text', function($data) use ($bot, $db) {
 
       $bot->sendMessage([
         'chat_id'=> CREATOR,
-        'text'=> "سوال ارسالی در ژانر ${genre} :\n\n${text}",
+        'text'=> "via [$chat_id](tg://openmessage?user_id=$chat_id)\n\nسوال ارسالی در ژانر ${genre} :\n\n${text}",
         'reply_markup'=> Telebot::inline_keyboard("[لغو ❌|reject][تایید ✅|add_${type}]"),
+        'parse_mode'=> "Markdown"
       ]);
     }
   } else {
@@ -326,6 +327,8 @@ ${names}",
     ]); 
   }
 
+  $random_type = ["normal", "sexy"][random_int(0, 1)];
+
   if (startsWith('q_truth_', $query_data)) {
     $pid = substr($query_data, strlen('q_truth_'));
     $data = $db->get_game($pid);
@@ -341,7 +344,14 @@ ${names}",
       'text'=> "
 > نوبت : ${current_player}
 📍 نوع سوال و جنسیت خودت رو انتخاب کن :",
-      'reply_markup'=> Telebot::inline_keyboard("[حقیقت عادی (🙍🏻‍♂️)|run_${pid},truth_normal_boy][حقیقت +18 (🙍🏻‍♂️)|run_${pid},truth_sexy_boy]\n[حقیقت عادی (🙎🏻‍♀️)|run_${pid},truth_normal_girl][حقیقت +18 (🙎🏻‍♀️)|run_${pid},truth_sexy_girl]\n[برگشت|back_to_game_${pid}]\n[👇🏻 - دستورات مخصوص سازنده بازی - 👇🏻|null]\n[رد کردن این شخص ♻️|skip_${pid}][اتمام بازی ❗️|end_game_${pid}]"),
+      'reply_markup'=> Telebot::inline_keyboard("
+        [حقیقت عادی (🙍🏻‍♂️)|run_${pid},truth_normal_boy][حقیقت +18 (🙍🏻‍♂️)|run_${pid},truth_sexy_boy]
+        [حقیقت عادی (🙎🏻‍♀️)|run_${pid},truth_normal_girl][حقیقت +18 (🙎🏻‍♀️)|run_${pid},truth_sexy_girl]
+        [حقیقت شانسی (🙎🏻‍♀️)|run_${pid},truth_${random_type}_girl][حقیقت شانسی (🙍🏻‍♂️)|run_${pid},truth_${random_type}_boy]
+        [برگشت|back_to_game_${pid}]
+        [👇🏻 - دستورات مخصوص سازنده بازی - 👇🏻|null]
+        [رد کردن این شخص ♻️|skip_${pid}][اتمام بازی ❗️|end_game_${pid}]
+      "),
       'inline_message_id'=> $callback_query['inline_message_id']
     ]);
   }
@@ -361,7 +371,14 @@ ${names}",
       'text'=> "
 > نوبت : ${current_player}
 📍 نوع سوال و جنسیت خودت رو انتخاب کن :",
-      'reply_markup'=> Telebot::inline_keyboard("[جرأت عادی (🙍🏻‍♂️)|run_${pid},dare_normal_boy][جرأت +18 (🙍🏻‍♂️)|run_${pid},dare_sexy_boy]\n[جرأت عادی (🙎🏻‍♀️)|run_${pid},dare_normal_girl][جرأت +18 (🙎🏻‍♀️)|run_${pid},dare_sexy_girl]\n[برگشت|back_to_game_${pid}]\n[👇🏻 - دستورات مخصوص سازنده بازی - 👇🏻|null]\n[رد کردن این شخص ♻️|skip_${pid}][اتمام بازی ❗️|end_game_${pid}]"),
+      'reply_markup'=> Telebot::inline_keyboard("
+        [جرأت عادی (🙍🏻‍♂️)|run_${pid},dare_normal_boy][جرأت +18 (🙍🏻‍♂️)|run_${pid},dare_sexy_boy]
+        [جرأت عادی (🙎🏻‍♀️)|run_${pid},dare_normal_girl][جرأت +18 (🙎🏻‍♀️)|run_${pid},dare_sexy_girl]
+        [جرأت شانسی (🙎🏻‍♀️)|run_${pid},dare_${random_type}_girl][جرأت شانسی (🙍🏻‍♂️)|run_${pid},dare_${random_type}_boy]
+        [برگشت|back_to_game_${pid}]
+        [👇🏻 - دستورات مخصوص سازنده بازی - 👇🏻|null]
+        [رد کردن این شخص ♻️|skip_${pid}][اتمام بازی ❗️|end_game_${pid}]
+      "),
       'inline_message_id'=> $callback_query['inline_message_id']
     ]);
   }
